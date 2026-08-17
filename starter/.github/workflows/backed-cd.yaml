@@ -1,0 +1,40 @@
+name: Backend Continuous Delivery
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install pipenv
+          pipenv install --dev
+
+      - name: Run tests
+        run: |
+          pipenv run pytest
+
+      - name: Deploy application
+        run: |
+          echo "Deploying backend application..."
